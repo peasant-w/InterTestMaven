@@ -20,6 +20,7 @@ import java.io.IOException;
 public class UploadTest {
     public static void main(String[] args) throws IOException {
         HttpClient client = HttpClients.createDefault();
+        //商城图片接口地址
         HttpPost upload = new HttpPost("http://www.testingedu.com.cn:8000/index.php/home/Uploadify/imageUp/savepath/head_pic/pictitle/banner/dir/images.html");
         //创建multipartEntityBuilder,用于完成完成请求的封装
         MultipartEntityBuilder mtpEn = MultipartEntityBuilder.create();
