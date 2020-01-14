@@ -35,7 +35,7 @@ public class BaiDuIPTest {
             AutoLogger.log.info("ipResult:" + ipResult);
             //
         } catch (IOException e) {
-            e.printStackTrace();
+            AutoLogger.log.info(e,e.fillInStackTrace());
         }
 
     }
