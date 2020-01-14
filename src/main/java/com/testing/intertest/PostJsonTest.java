@@ -8,6 +8,9 @@ import org.apache.http.impl.client.HttpClients;
 
 import java.io.UnsupportedEncodingException;
 
+/**
+ * json参数请求调试
+ */
 public class PostJsonTest {
     public static void main(String[] args) throws UnsupportedEncodingException {
         //创建一个httpclient用于收发包
