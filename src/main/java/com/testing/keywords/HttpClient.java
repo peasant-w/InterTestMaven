@@ -261,7 +261,7 @@ public class HttpClient {
             client = HttpClients.custom().setConnectionManager(connManager).build();
         }
 
-        //拼接接口地址和参数
+        //拼接接口地址和参
         try {
             String urlWithParam = "";
             if (param.length() > 0) {
