@@ -24,16 +24,12 @@ public class BaiDuIPTest {
         try {
             //发包并且获取返回
             HttpResponse ipRes = client.execute(ipGet);
-//            System.out.println("Response:"+ipRes);
             AutoLogger.log.info("Response:" + ipRes);
             //解析返回的主体内容
             HttpEntity ipEntity = ipRes.getEntity();
-//            System.out.println("ipEntity:"+ipEntity);
             AutoLogger.log.info("ipEntity:" + ipEntity);
             String ipResult = EntityUtils.toString(ipEntity);
-//            System.out.println("ipResult:"+ipResult);
             AutoLogger.log.info("ipResult:" + ipResult);
-            //
         } catch (IOException e) {
             AutoLogger.log.info(e,e.fillInStackTrace());
         }
