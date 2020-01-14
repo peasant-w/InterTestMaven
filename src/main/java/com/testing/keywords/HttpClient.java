@@ -37,7 +37,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author wong
+ * @author wangwei
  */
 public class HttpClient {
     /**
@@ -47,24 +47,37 @@ public class HttpClient {
     /**
      * cookies:cookieStore类，httpclient用它来记录得到的cookie值
      */
-    private BasicCookieStore cookies =  new BasicCookieStore();
+    private BasicCookieStore cookies = new BasicCookieStore();
     /**
      * headers:成员变量headers，用于存放需要加载的头域参数
      */
 
     private Map<String, String> headers = new HashMap<String, String>();
-    //是否添加header，默认不添加
+    /**
+     * addHeaderFlag:是否添加header，默认不添加
+     */
+
     private boolean addHeaderFlag = false;
-    //httpclient对象作为客户端发包
-    private CloseableHttpClient client ;
-    //使用cookiestore仓库时设置client内容对象context
+    /**
+     * client:httpclient对象作为客户端发包
+     */
+
+    private CloseableHttpClient client;
+    /**
+     * context:使用cookiestore仓库时设置client内容对象context
+     */
+
     public HttpClientContext context = HttpClientContext.create();
 
-    // 匹配unicode编码格式的正则表达式。
+    /**
+     * reUnicode:匹配unicode编码格式的正则表达式
+     */
+
     private static final Pattern reUnicode = Pattern.compile("\\\\u([0-9a-fA-F]{4})");
 
     /**
      * 查找字符串中的unicode编码并转换为中文。
+     *
      * @param u
      * @return
      */
@@ -107,13 +120,14 @@ public class HttpClient {
             }
         };
 
-        sc.init(null, new TrustManager[] { trustManager }, null);
+        sc.init(null, new TrustManager[]{trustManager}, null);
         return sc;
     }
 
     /**
      * 通过httpclient实现get方法，其中包括代理地址的设置、头域添加和cookie使用。
-     * @param url 接口的url地址
+     *
+     * @param url   接口的url地址
      * @param param 接口的参数列表。
      */
     public String doGet(String url, String param) throws Exception {
@@ -161,7 +175,7 @@ public class HttpClient {
             }
             // 创建get方式请求对象
             HttpGet get = new HttpGet(urlWithParam);
-            RequestConfig config=RequestConfig.custom().setSocketTimeout(15000).setConnectTimeout(10000).build();
+            RequestConfig config = RequestConfig.custom().setSocketTimeout(15000).setConnectTimeout(10000).build();
             get.setConfig(config);
             // 指定报文头Content-type、User-Agent
             get.setHeader("accept", "*/*");
@@ -201,7 +215,7 @@ public class HttpClient {
             return result;
         } catch (Exception e) {
             System.out.println();
-            body=e.fillInStackTrace().toString();
+            body = e.fillInStackTrace().toString();
             e.printStackTrace();
         } finally {
             client.close();
@@ -211,7 +225,8 @@ public class HttpClient {
 
     /**
      * 通过httpclient实现post方法，其中包括代理地址的设置、头域添加和cookie使用。
-     * @param url 接口的url地址
+     *
+     * @param url   接口的url地址
      * @param param 接口的参数列表。
      */
     public String doPost(String url, String param) throws Exception {
@@ -257,7 +272,7 @@ public class HttpClient {
 
             // 创建post方式请求对象
             HttpPost httpPost = new HttpPost(urlWithParam);
-            RequestConfig config=RequestConfig.custom().setSocketTimeout(15000).setConnectTimeout(10000).build();
+            RequestConfig config = RequestConfig.custom().setSocketTimeout(15000).setConnectTimeout(10000).build();
             httpPost.setConfig(config);
             // 指定报文头Content-type、User-Agent
             httpPost.setHeader("accept", "*/*");
@@ -298,7 +313,7 @@ public class HttpClient {
             return result;
         } catch (Exception e) {
             System.out.println();
-            body=e.fillInStackTrace().toString();
+            body = e.fillInStackTrace().toString();
             e.printStackTrace();
         } finally {
             client.close();
@@ -308,12 +323,13 @@ public class HttpClient {
 
     /**
      * 实现httpclient发送json格式请求的方法
-     * @param url  请求接口的url地址
+     *
+     * @param url       请求接口的url地址
      * @param jsonparam 接口参数，json格式
      * @return
      * @throws Exception
      */
-    public String doPostJson(String url, String jsonparam) throws Exception{
+    public String doPostJson(String url, String jsonparam) throws Exception {
         String body = "";
 
         // 采用绕过验证的方式处理https请求
@@ -350,7 +366,7 @@ public class HttpClient {
             // 创建post方式请求对象
             HttpPost httpPost = new HttpPost(url);
             //设置请求超时时限
-            RequestConfig config=RequestConfig.custom().setSocketTimeout(15000).setConnectTimeout(10000).build();
+            RequestConfig config = RequestConfig.custom().setSocketTimeout(15000).setConnectTimeout(10000).build();
             httpPost.setConfig(config);
             // 指定报文头Content-type、User-Agent
             httpPost.setHeader("Accept", "*/*");
@@ -367,7 +383,7 @@ public class HttpClient {
                 }
             }
 
-            StringEntity jsonReq=new StringEntity(jsonparam);
+            StringEntity jsonReq = new StringEntity(jsonparam);
             jsonReq.setContentEncoding("utf-8");
             jsonReq.setContentType("application/json;charset=utf-8");
             httpPost.setEntity(jsonReq);
@@ -379,7 +395,7 @@ public class HttpClient {
             HttpEntity entity = response.getEntity();
             if (entity != null) {
                 // 按指定编码转换结果实体为String类型
-                body = EntityUtils.toString(entity,"UTF-8");
+                body = EntityUtils.toString(entity, "UTF-8");
             }
 
             EntityUtils.consume(entity);
@@ -391,7 +407,7 @@ public class HttpClient {
             return result;
         } catch (Exception e) {
             System.out.println();
-            body=e.fillInStackTrace().toString();
+            body = e.fillInStackTrace().toString();
             e.printStackTrace();
         } finally {
             client.close();
@@ -401,7 +417,8 @@ public class HttpClient {
 
     /**
      * 通过httpclient实现soap请求，其中包括代理地址的设置、头域添加和cookie使用。
-     * @param url 接口的url地址
+     *
+     * @param url   接口的url地址
      * @param param 接口的参数列表。
      */
     public String doSoap(String url, String param) throws Exception {
@@ -497,7 +514,7 @@ public class HttpClient {
     /**
      * 执行put方法，通过httpclient创建client对象之后，使用httpput方法来完成发包。
      */
-    public String doPut(String url,String param) throws Exception{
+    public String doPut(String url, String param) throws Exception {
         //接收返回数据的String
         String body = "";
 
@@ -536,8 +553,8 @@ public class HttpClient {
             urlWithParam = url;
         }
         //基于url创建put方法
-        HttpPut httpput= new HttpPut(urlWithParam);
-        RequestConfig config=RequestConfig.custom().setSocketTimeout(15000).setConnectTimeout(10000).build();
+        HttpPut httpput = new HttpPut(urlWithParam);
+        RequestConfig config = RequestConfig.custom().setSocketTimeout(15000).setConnectTimeout(10000).build();
         httpput.setConfig(config);
         // 指定报文头Content-type、User-Agent
         httpput.setHeader("accept", "*/*");
@@ -546,7 +563,7 @@ public class HttpClient {
                 "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36");
 
         //发包获取返回包
-        CloseableHttpResponse response=client.execute(httpput);
+        CloseableHttpResponse response = client.execute(httpput);
 
 
         //取出返回中的实体
@@ -565,7 +582,7 @@ public class HttpClient {
         return result;
     }
 
-    public String doUpload(String url ,String filePath) throws Exception {
+    public String doUpload(String url, String filePath) throws Exception {
         String body = "";
 
         // 采用绕过验证的方式处理https请求
@@ -598,17 +615,17 @@ public class HttpClient {
 
         try {
             //基于url创建put方法
-            HttpPost postFile= new HttpPost(url);
-            RequestConfig config=RequestConfig.custom().setSocketTimeout(15000).setConnectTimeout(10000).build();
+            HttpPost postFile = new HttpPost(url);
+            RequestConfig config = RequestConfig.custom().setSocketTimeout(15000).setConnectTimeout(10000).build();
             postFile.setConfig(config);
             // 指定报文头Content-type、User-Agent
             postFile.setHeader("accept", "*/*");
             postFile.setHeader("User-Agent",
                     "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36");
-            File upFile=new File(filePath);
-            MultipartEntityBuilder mtp=MultipartEntityBuilder.create();
+            File upFile = new File(filePath);
+            MultipartEntityBuilder mtp = MultipartEntityBuilder.create();
             mtp.addBinaryBody("file", upFile);
-            HttpEntity uploadEntity=mtp.build();
+            HttpEntity uploadEntity = mtp.build();
             postFile.setEntity(uploadEntity);
             // 执行请求操作，并拿到结果
             CloseableHttpResponse response = client.execute(postFile);
@@ -632,10 +649,9 @@ public class HttpClient {
             String result = DeCode(body);
             System.out.println("result:" + result);
             return result;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println();
-            body=e.fillInStackTrace().toString();
+            body = e.fillInStackTrace().toString();
             e.printStackTrace();
         } finally {
             client.close();
@@ -650,6 +666,7 @@ public class HttpClient {
     public void saveCookie() {
         useCookie = true;
     }
+
     /**
      * 设置使用cookie标志位为false，此时实例化httpclient不带cookie，并且重置cookieStore，清空其中的内容。
      */
@@ -657,8 +674,10 @@ public class HttpClient {
         useCookie = false;
         cookies = new BasicCookieStore();
     }
+
     /**
      * 设置添加头域标志位为true，并且通过传递头域map，实例化成员变量headers
+     *
      * @param headerMap 传递的头域参数map
      */
     public void addHeader(Map<String, String> headerMap) {
