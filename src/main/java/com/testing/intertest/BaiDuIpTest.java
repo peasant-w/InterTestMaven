@@ -15,7 +15,7 @@ import java.io.IOException;
  * @author wong
  * @date 2019-10-13
  */
-public class BaiDuIPTest {
+public class BaiDuIpTest {
     public static void main(String[] args) {
         //创建一个默认的httpclient用于收发包
         HttpClient client = HttpClients.custom().build();

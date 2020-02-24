@@ -1,6 +1,7 @@
 package com.testing.keywords;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -73,7 +74,7 @@ public class HttpClient {
      * reUnicode:匹配unicode编码格式的正则表达式
      */
 
-    private static final Pattern reUnicode = Pattern.compile("\\\\u([0-9a-fA-F]{4})");
+    private static final Pattern REUNICODE = Pattern.compile("\\\\u([0-9a-fA-F]{4})");
 
     /**
      * 查找字符串中的unicode编码并转换为中文。
@@ -81,9 +82,9 @@ public class HttpClient {
      * @param u
      * @return
      */
-    private String DeCode(String u) {
+    private String deCode(String u) {
         try {
-            Matcher m = reUnicode.matcher(u);
+            Matcher m = REUNICODE.matcher(u);
             StringBuffer sb = new StringBuffer(u.length());
             while (m.find()) {
                 m.appendReplacement(sb, Character.toString((char) Integer.parseInt(m.group(1), 16)));
@@ -99,7 +100,7 @@ public class HttpClient {
     /**
      * SSLcontext用于绕过ssl验证，使发包的方法能够对https的接口进行请求。
      */
-    public static SSLContext createIgnoreVerifySSL() throws NoSuchAlgorithmException, KeyManagementException, NoSuchAlgorithmException {
+    public static SSLContext createIgnoreVerifySsl() throws NoSuchAlgorithmException, KeyManagementException, NoSuchAlgorithmException {
         SSLContext sc = SSLContext.getInstance("SSLv3");
 
         // 实现一个X509TrustManager接口，用于绕过验证，不用修改里面的方法
@@ -135,7 +136,7 @@ public class HttpClient {
         String body = "";
 
         // 采用绕过验证的方式处理https请求
-        SSLContext sslcontext = createIgnoreVerifySSL();
+        SSLContext sslcontext = createIgnoreVerifySsl();
 
         // 设置协议http和https对应的处理socket链接工厂的对象
         Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
@@ -210,7 +211,7 @@ public class HttpClient {
             EntityUtils.consume(entity);
             // 释放链接
             response.close();
-            String result = DeCode(body);
+            String result = deCode(body);
             System.out.println("result:" + result);
             return result;
         } catch (Exception e) {
@@ -234,7 +235,7 @@ public class HttpClient {
         String body = "";
 
         // 采用绕过验证的方式处理https请求
-        SSLContext sslcontext = createIgnoreVerifySSL();
+        SSLContext sslcontext = createIgnoreVerifySsl();
         // 设置协议http和https对应的处理socket链接工厂的对象，用于同时发送http和https请求
         Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
                 .register("http", PlainConnectionSocketFactory.INSTANCE)
@@ -308,7 +309,7 @@ public class HttpClient {
             EntityUtils.consume(entity);
             // 释放链接
             response.close();
-            String result = DeCode(body);
+            String result = deCode(body);
             System.out.println("result:" + result);
             return result;
         } catch (Exception e) {
@@ -333,7 +334,7 @@ public class HttpClient {
         String body = "";
 
         // 采用绕过验证的方式处理https请求
-        SSLContext sslcontext = createIgnoreVerifySSL();
+        SSLContext sslcontext = createIgnoreVerifySsl();
         // 设置协议http和https对应的处理socket链接工厂的对象
         Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
                 .register("http", PlainConnectionSocketFactory.INSTANCE)
@@ -401,7 +402,7 @@ public class HttpClient {
             EntityUtils.consume(entity);
             // 释放链接
             response.close();
-            String result = DeCode(body);
+            String result = deCode(body);
             System.out.println("body:" + body);
             System.out.println("result:" + result);
             return result;
@@ -427,7 +428,7 @@ public class HttpClient {
         //设置代理地址，适用于需要用fiddler抓包时使用，不用时切记注释掉这句！
 //		HttpHost proxy = new HttpHost("localhost", 8888, "http");
         // 采用绕过验证的方式处理https请求
-        SSLContext sslcontext = createIgnoreVerifySSL();
+        SSLContext sslcontext = createIgnoreVerifySsl();
         // 设置协议http和https对应的处理socket链接工厂的对象，用于同时发送http和https请求
         Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
                 .register("http", PlainConnectionSocketFactory.INSTANCE)
@@ -499,7 +500,7 @@ public class HttpClient {
             EntityUtils.consume(entity);
             // 释放链接
             response.close();
-            String result = DeCode(body);
+            String result = deCode(body);
             System.out.println("result:" + result);
             return result;
         } catch (Exception e) {
@@ -519,7 +520,7 @@ public class HttpClient {
         String body = "";
 
         // 采用绕过验证的方式处理https请求
-        SSLContext sslcontext = createIgnoreVerifySSL();
+        SSLContext sslcontext = createIgnoreVerifySsl();
         // 设置协议http和https对应的处理socket链接工厂的对象，用于同时发送http和https请求
         Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
                 .register("http", PlainConnectionSocketFactory.INSTANCE)
@@ -540,7 +541,7 @@ public class HttpClient {
         //基于是否需要使用cookie，用不同方式创建httpclient实例。
         if (useCookie) {
             //实例化httpclient时，使用cookieStore，此时将会使用cookie
-            client = HttpClients.custom().setConnectionManager(connManager).setDefaultCookieStore((org.apache.http.client.CookieStore) cookies).build();
+            client = HttpClients.custom().setConnectionManager(connManager).setDefaultCookieStore((CookieStore) cookies).build();
         } else {
             //实例化httpclient时，使用cookieStore，此时将不使用cookie
             client = HttpClients.custom().setConnectionManager(connManager).build();
@@ -576,7 +577,7 @@ public class HttpClient {
         EntityUtils.consume(entity);
         // 释放链接
         response.close();
-        String result = DeCode(body);
+        String result = deCode(body);
         System.out.println("body:" + body);
         System.out.println("result:" + result);
         return result;
@@ -586,7 +587,7 @@ public class HttpClient {
         String body = "";
 
         // 采用绕过验证的方式处理https请求
-        SSLContext sslcontext = createIgnoreVerifySSL();
+        SSLContext sslcontext = createIgnoreVerifySsl();
         // 设置协议http和https对应的处理socket链接工厂的对象，用于同时发送http和https请求
         Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
                 .register("http", PlainConnectionSocketFactory.INSTANCE)
@@ -607,7 +608,7 @@ public class HttpClient {
         //基于是否需要使用cookie，用不同方式创建httpclient实例。
         if (useCookie) {
             //实例化httpclient时，使用cookieStore，此时将会使用cookie
-            client = HttpClients.custom().setConnectionManager(connManager).setDefaultCookieStore((org.apache.http.client.CookieStore) cookies).build();
+            client = HttpClients.custom().setConnectionManager(connManager).setDefaultCookieStore((CookieStore) cookies).build();
         } else {
             //实例化httpclient时，使用cookieStore，此时将不使用cookie
             client = HttpClients.custom().setConnectionManager(connManager).build();
@@ -646,7 +647,7 @@ public class HttpClient {
             EntityUtils.consume(entity);
             // 释放链接
             response.close();
-            String result = DeCode(body);
+            String result = deCode(body);
             System.out.println("result:" + result);
             return result;
         } catch (Exception e) {
@@ -690,6 +691,6 @@ public class HttpClient {
      */
     public void clearHeader() {
         addHeaderFlag = false;
-        headers = new HashMap<String, String>();
+        headers = new HashMap<String, String>(10);
     }
 }
